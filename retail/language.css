@@ -1,0 +1,14 @@
+/* Dil seçimi */
+.language-button{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid #f3f1eb4d;color:#f3f1eb;padding:9px 12px;font:600 13px/1 var(--body,Arial);cursor:pointer;flex-shrink:0}.language-button:hover{border-color:#f3d829;color:#f3d829}
+.language-dialog{width:min(560px,calc(100% - 32px));max-height:90dvh;border:0;background:#f3d829;color:#171715;padding:48px;box-sizing:border-box}
+.language-dialog::backdrop{background:#0f0f0ed9}
+.language-dialog .eyebrow{margin:0;font:600 13px/1 var(--body,Arial)}
+.language-dialog h2{font:800 64px/.9 var(--display,Arial);text-transform:uppercase;margin:18px 0}.language-dialog h2 em{font-style:normal}
+.language-dialog>p:not(.eyebrow){font-size:14px;margin:0}
+.language-close{position:absolute;right:14px;top:10px;width:44px;height:44px;border:0;background:#171715;color:#f3f1eb;font-size:24px;cursor:pointer}
+.language-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:26px}
+.language-options button{border:0;background:#17171514;padding:16px;text-align:left;font:500 16px/1.4 var(--body,Arial);cursor:pointer;color:#171715}
+.language-options button:hover,.language-options button[aria-pressed=true]{background:#171715;color:#f3d829}
+.language-options button:focus-visible{outline:2px solid #171715;outline-offset:2px}
+html:lang(zh) :is(h1,h2,h3,.panel-text strong){letter-spacing:0;line-height:1.08;font-weight:700}
+@media(max-width:700px){.language-dialog{padding:32px}.language-dialog h2{font-size:48px}}

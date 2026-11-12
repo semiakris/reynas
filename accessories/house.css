@@ -1,0 +1,204 @@
+/* Reynas Accessories — kömür, fildişi, mat altın. Kaydırmayla ilerleyen film + sade bölümler. */
+body.acc{--ink:#171918;--graphite:#292B29;--ivory:#F5F3ED;--gold:#B99A58;--gray:#A5A5A1;--serif:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,"Songti SC","Noto Serif CJK SC",serif;background:var(--ink);color:var(--ivory)}
+.acc h1,.acc h2,.acc h3{font-family:var(--serif);font-weight:400;text-transform:none;letter-spacing:-.012em;line-height:1.02;overflow-wrap:anywhere}
+.acc h2{font-size:clamp(40px,5vw,76px)}
+.acc :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.acc .top{background:var(--ink);border-bottom-color:#f5f3ed14}
+.acc .top nav a:hover{color:var(--gold)}
+.acc .btn{clip-path:none;min-height:50px;padding:0 28px;font:500 14.5px/1 var(--body);letter-spacing:.02em;transition:background .25s,color .25s,border-color .25s}
+.acc .btn.solid{background:var(--ivory);color:var(--ink)}.acc .btn.solid:hover{background:var(--gold);color:var(--ink)}
+.acc .btn.ghost{background:none;color:var(--ivory);box-shadow:inset 0 0 0 1px #f5f3ed59}.acc .btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--gold);color:var(--gold)}
+.acc .top nav .nav-cta{clip-path:none;background:none;color:var(--ivory);box-shadow:inset 0 0 0 1px #f5f3ed59;padding:11px 20px;font-weight:500}.acc .top nav .nav-cta:hover{background:var(--ivory);color:var(--ink)}
+.acc .sites a[aria-current]{color:var(--gold)}.acc .util a:hover{color:var(--gold)}.acc .menu i{background:var(--ivory)}
+.eyebrow{margin:0 0 18px;font:500 12.5px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- film ---------- */
+.film{position:relative;background:#101110}
+.film-pin{position:relative;height:calc(100svh - 76px);min-height:480px;overflow:hidden}
+.film-poster,.film-canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:68% 50%}
+.film-canvas{display:none}
+.film-copy{position:absolute;inset:0;display:grid;align-items:center;padding:0 var(--pad);pointer-events:none;background:linear-gradient(90deg,#101110e0 0,#101110b8 26%,#10111000 56%)}
+.scene{grid-area:1/1;max-width:min(42vw,640px);opacity:0;transform:translateY(14px);transition:opacity .6s,transform .8s cubic-bezier(.2,.7,.2,1);visibility:hidden}
+.scene.on{opacity:1;transform:none;visibility:visible;pointer-events:auto}
+.scene h1,.scene h2{font-size:clamp(44px,5.2vw,88px);line-height:1}
+.scene .lead{margin:22px 0 0;max-width:34ch;font-size:clamp(16px,1.25vw,19px);line-height:1.55;color:#f5f3edb8}
+.scene .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.film-rail{position:absolute;left:var(--pad);right:var(--pad);bottom:30px;height:1px;background:#f5f3ed1f}
+.film-rail i{display:block;height:100%;width:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0)}
+.film-note{position:absolute;right:var(--pad);bottom:40px;margin:0;font-size:11.5px;letter-spacing:.06em;color:#f5f3ed5c}
+/* film çalışırken: sabitlenir, kaydırma ilerletir */
+.film.live{height:460vh}
+.film.live .film-pin{position:sticky;top:76px}
+.film.live .film-canvas{display:block}
+.film.live .film-poster{visibility:hidden}
+@media(max-width:860px){
+ .film-poster,.film-canvas{object-position:50% 50%}
+ .film-copy{align-items:end;padding-bottom:62px;background:linear-gradient(0deg,#101110 0,#101110e6 24%,#10111000 58%)}
+ .scene{max-width:none}.scene h1,.scene h2{font-size:clamp(38px,10.5vw,60px)}.scene .lead{margin-top:14px}.scene .cta{margin-top:22px}
+ .film-note{bottom:auto;top:14px}.film-rail{bottom:26px}
+}
+@media(prefers-reduced-motion:reduce){.scene{transition:none}}
+
+/* ---------- ortak: görsel yuvası ---------- */
+.steps,.quote,.coll>header,.mat,.eco{padding:clamp(80px,11vw,170px) var(--pad)}
+figure{margin:0}
+.ph{display:none}
+figure.missing{background:radial-gradient(120% 90% at 70% 30%,#2b2d2b 0,#1b1d1c 60%)}
+figure.missing img{visibility:hidden}
+figure.missing .ph{display:block;position:absolute;right:22px;bottom:18px;font-size:11.5px;letter-spacing:.08em;color:#f5f3ed5c}
+.demo-note{position:absolute;right:var(--pad);bottom:22px;margin:0;font-size:11.5px;letter-spacing:.06em;color:#f5f3ed5c}
+
+/* ---------- üstbilgi: açılışta saydam ---------- */
+.acc .top{transition:background .35s,border-color .35s}
+.acc.at-top .top{background:transparent;border-bottom-color:transparent}
+.acc .top nav.open{background:var(--ink)}
+
+/* ---------- açılış ---------- */
+.ahero{position:relative;margin-top:-76px;background:#101110}
+.ahero-pin{position:relative;height:100svh;min-height:520px;overflow:hidden}
+.ahero-media{position:absolute;inset:0}
+.ahero-media img{width:100%;height:100%;object-fit:cover;object-position:66% 55%;transform-origin:var(--fx,62%) var(--fy,70%);transform:scale(var(--z,1));will-change:transform}
+.ahero-pin::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#101110e6 0,#101110b0 28%,#10111000 60%),linear-gradient(180deg,#10111099 0,#10111000 22%)}
+.ahero-copy{position:absolute;z-index:1;left:var(--pad);top:50%;transform:translateY(-46%);max-width:min(44vw,640px)}
+.ahero-copy h1{font-size:clamp(50px,6.4vw,112px);line-height:.98}
+.ahero-copy .lead{margin:24px 0 0;max-width:36ch;font-size:clamp(16px,1.3vw,20px);line-height:1.55;color:#f5f3edc2}
+.ahero-copy .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.ahero .demo-note{z-index:1}
+.ahero.live{height:200vh}.ahero.live .ahero-pin{position:sticky;top:0}
+@media(max-width:860px){
+ .ahero-pin::after{background:linear-gradient(0deg,#101110 0,#101110e0 30%,#10111000 62%),linear-gradient(180deg,#101110b0 0,#10111000 20%)}
+ .ahero-copy{top:auto;bottom:56px;transform:none;max-width:none;right:var(--pad)}
+ .ahero-copy h1{font-size:clamp(40px,11.5vw,64px)}.ahero-copy .lead{margin-top:14px}.ahero-copy .cta{margin-top:22px}
+ .ahero.live{height:170vh}.ahero .demo-note{bottom:auto;top:124px}
+}
+
+/* ---------- koleksiyon ---------- */
+.coll>header{padding-bottom:clamp(36px,5vw,70px)}
+.coll article{position:relative;display:grid;min-height:min(92vh,980px);overflow:hidden;background:#101110}
+.c-media{position:absolute;inset:0;overflow:hidden}
+.c-media figure{position:absolute;inset:-6% 0;transform:translate3d(0,calc(var(--s,0)*-5%),0)}
+.c-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.coll article:not(.split)::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#101110d9 0,#10111080 30%,#10111000 62%)}
+.c-text{position:relative;z-index:1;align-self:end;padding:clamp(34px,5vw,84px) var(--pad);max-width:min(640px,100%)}
+.c-text .num{display:block;margin-bottom:18px;font:500 13px/1 var(--body);letter-spacing:.2em;color:var(--gold)}
+.c-text h3{font-size:clamp(46px,6.6vw,116px);line-height:.96}
+.c-text p{margin:18px 0 26px;max-width:36ch;font-size:17px;color:#f5f3edb8}
+.c-text a{display:inline-block;font-size:14.5px;font-weight:500;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:5px;transition:color .25s,padding .35s}
+.c-text a:hover{color:var(--gold);padding-right:14px}
+/* açık zeminli, çerçeveli paneller */
+.coll article.split{background:var(--ivory);color:var(--ink);min-height:0}
+.split .c-media{position:relative;inset:auto;aspect-ratio:3/2;margin:clamp(18px,3vw,44px)}
+.split .c-text p{color:#171918b8}.split .c-text .num{color:#8a6f33}.split .c-text a:hover{color:#8a6f33}
+.split .c-text{align-self:center}
+@media(min-width:900px){.coll article.split{grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center}.split .c-text{order:-1}.split.flip .c-text{order:1}.split .c-text h3{font-size:clamp(40px,4.8vw,84px)}}
+/* her gruba özgü tek hareket */
+.c-packaging:hover img{transform:translateY(-2.2%) scale(1.03)}
+.c-bags:hover img{transform-origin:70% 12%;transform:scale(1.08)}
+.c-leather:hover img{transform-origin:66% 60%;transform:scale(1.1)}
+.c-flexible .c-media::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,#fff0 38%,#ffffff24 50%,#fff0 62%);transform:translateX(-70%);transition:transform 1.6s cubic-bezier(.3,.6,.2,1);pointer-events:none}
+.c-flexible:hover .c-media::after{transform:translateX(70%)}
+.c-custom:hover img{transform:scale(1.03)}
+
+/* ---------- malzeme ---------- */
+.mat{background:#101110}
+.mat>header{display:grid;gap:18px;margin-bottom:clamp(36px,5vw,70px)}
+.mat>header h2{max-width:14ch}.mat>header p{margin:0;max-width:44ch;color:#f5f3eda8;font-size:17px}
+.mat-body{display:grid;gap:clamp(22px,4vw,64px)}
+.mat-tabs{display:grid;align-content:start;border-top:1px solid #f5f3ed2e}
+.mat-tabs button{display:block;text-align:left;background:none;border:0;border-bottom:1px solid #f5f3ed2e;padding:22px 0;color:#f5f3ed80;cursor:pointer;font:inherit;transition:color .3s,padding .4s}
+.mat-tabs b{display:block;font:400 clamp(30px,3.4vw,52px)/1 var(--serif)}
+.mat-tabs span{display:block;max-height:0;overflow:hidden;opacity:0;font-size:15px;transition:max-height .4s,opacity .4s,margin .4s}
+.mat-tabs button:hover{color:var(--ivory)}
+.mat-tabs button[aria-selected=true]{color:var(--ivory);padding-left:18px;box-shadow:inset 2px 0 0 var(--gold)}
+.mat-tabs button[aria-selected=true] span{max-height:60px;opacity:.72;margin-top:10px}
+.mat-stage{position:relative;aspect-ratio:1/1;overflow:hidden;background:#171918}
+.mat-stage figure{position:absolute;inset:0;opacity:0;transition:opacity .8s}
+.mat-stage figure.on{opacity:1}
+.mat-stage img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 2.4s cubic-bezier(.2,.7,.2,1)}
+.mat-stage figure.on img{transform:none}
+@media(min-width:900px){.mat>header{grid-template-columns:1.2fr 1fr;align-items:end}.mat-body{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}.mat-stage{aspect-ratio:6/5}}
+
+/* ---------- Reynas ailesi ---------- */
+.eco{background:var(--graphite)}
+.eco ul{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid #f5f3ed2e}
+.eco li{display:grid;gap:8px;padding:28px 0;border-bottom:1px solid #f5f3ed2e}
+.eco a,.eco b{font:400 clamp(32px,3.8vw,58px)/1 var(--serif);color:var(--ivory);text-decoration:none;transition:color .25s}
+.eco a:hover{color:var(--gold)}.eco .here b{color:var(--gold)}
+.eco span{color:#f5f3eda8;font-size:15px}
+@media(min-width:900px){.eco ul{grid-template-columns:repeat(3,minmax(0,1fr));border-top:0}.eco li{border-top:1px solid #f5f3ed2e;border-bottom:0;padding-right:30px}}
+
+/* ---------- kapanış ---------- */
+.final{position:relative;display:grid;min-height:min(92vh,960px);background:var(--ivory);color:var(--ink);overflow:hidden}
+.final figure{position:absolute;inset:0}.final img{width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.final figure.missing{background:linear-gradient(180deg,#f5f3ed 0,#e7e3d8 100%)}.final figure.missing .ph{color:#17191870}
+.final div{position:relative;align-self:start;display:grid;justify-items:center;gap:28px;text-align:center;padding:clamp(60px,9vw,130px) var(--pad) 0}
+.final h2{font-size:clamp(44px,6.4vw,112px);max-width:14ch}
+.final .btn.solid{background:var(--ink);color:var(--ivory)}.final .btn.solid:hover{background:#8a6f33;color:#fff}
+
+/* film artık yapım bölümü */
+.film.live{height:340vh}
+
+/* ---------- süreç ---------- */
+.steps{display:grid;gap:clamp(30px,5vw,70px);background:var(--ivory);color:var(--ink)}
+.steps ol{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:3.4em minmax(0,1fr);gap:4px 10px;padding:24px 0;border-top:1px solid #17191826}
+.steps li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:400 30px/1.2 var(--serif);color:#8a6f33}
+.steps h3{font-size:32px}.steps li p{margin:0;color:#171918b8;max-width:46ch}
+@media(min-width:900px){.steps{grid-template-columns:1fr 1.15fr;align-items:start}}
+
+/* ---------- teklif ---------- */
+.quote{display:grid;gap:clamp(30px,5vw,80px);background:var(--ivory);color:var(--ink)}
+.quote>*{min-width:0}
+.quote .lead-col p{max-width:40ch;margin:20px 0 26px;color:#171918b8}
+.quote .phone{display:block;font:400 clamp(30px,3.4vw,46px)/1 var(--serif);text-decoration:none;color:var(--ink)}
+.quote address{font-style:normal;margin-top:14px;color:#171918b8}
+#quote{display:grid;gap:16px}
+#quote label,#quote legend{font-size:14px;color:#171918c2;padding:0}
+#quote input[type=text],#quote input[type=email],#quote input[type=number],#quote textarea{display:block;width:100%;margin-top:7px;padding:13px 14px;background:#fff;border:1px solid #17191838;border-radius:0;font:400 16px/1.4 var(--body);color:var(--ink)}
+#quote input:focus,#quote textarea:focus{outline:0;border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+#quote fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}#quote legend{margin-bottom:9px}
+.chip{position:relative}.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:block;padding:10px 16px;border:1px solid #17191855;font-weight:500;font-size:15px;color:var(--ink)}
+.chip input:checked+span{background:var(--ink);border-color:var(--ink);color:var(--ivory)}
+.chip input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
+.pair{display:grid;gap:16px}@media(min-width:560px){.pair{grid-template-columns:1fr 1fr}}
+.quote .btn.solid{justify-self:start;background:var(--ink);color:var(--ivory)}.quote .btn.solid:hover{background:#8a6f33;color:#fff}
+#quote-status{margin:0;min-height:22px;font-size:14.5px;color:#7a5f25;font-weight:500}
+@media(min-width:900px){.quote{grid-template-columns:1fr 1.1fr;align-items:start}}
+.acc .foot{background:#101110}
+.scene h2{font-size:clamp(40px,4.5vw,76px)}@media(max-width:860px){.scene h2{font-size:clamp(34px,9.4vw,54px)}}
+
+@media(prefers-reduced-motion:reduce){.c-media figure{transform:none}.c-media img,.mat-stage img,.mat-stage figure{transition:none}}
+.c-text{max-width:min(920px,78%)}.c-text h3{font-size:clamp(44px,5.6vw,100px)}
+.mat>header .eyebrow,.coll>header .eyebrow{grid-column:1/-1;margin:0}
+@media(max-width:860px){.c-text{max-width:none}.ahero .demo-note{top:auto;bottom:16px}.ahero-copy{bottom:64px}}
+
+/* açılış: kategoriler arası geçiş */
+.ahero-media img{position:absolute;inset:0;object-position:60% 50%;opacity:0;transform:scale(calc(1.14 - var(--k,0)*.14));transform-origin:60% 55%;transition:none}
+.ahero-media img.on{opacity:1}
+.ahero.live .ahero-media img{opacity:var(--o,0)}
+.ahero.live{height:300vh}
+.ahero-index{position:absolute;z-index:1;right:var(--pad);bottom:54px;margin:0;padding:0;list-style:none;display:grid;gap:6px;text-align:right;font-size:13px;letter-spacing:.06em;color:#f5f3ed66;counter-reset:h}
+.ahero-index li{counter-increment:h;transition:color .4s}.ahero-index li::before{content:"0" counter(h) "  ";color:#f5f3ed40}
+.ahero-index li.on{color:var(--ivory)}.ahero-index li.on::before{color:var(--gold)}
+.final figure.missing{display:none}.final:has(figure.missing){min-height:0}.final:has(figure.missing) div{padding-bottom:clamp(60px,9vw,130px)}
+.c-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}.c-media video.on{opacity:1}
+@media(max-width:860px){.ahero.live{height:260vh}.ahero-index{display:none}.ahero-media img{object-position:62% 50%}}
+.mat>header h2{max-width:16ch}
+.ahero-media img{transform:translateX(7%) scale(calc(1.3 - var(--k,0)*.12))}
+.ahero .demo-note{right:auto;left:var(--pad)}
+@media(max-width:860px){.ahero-media img{transform:scale(calc(1.2 - var(--k,0)*.12))}}
+@media(max-width:860px){.ahero-media img{inset:76px 0 auto 0;height:58%;object-position:50% 50%;transform:scale(calc(1.1 - var(--k,0)*.1))}.ahero-pin::after{background:linear-gradient(0deg,#101110 0,#101110 34%,#10111000 56%)}}
+
+/* ürün filmleri: koleksiyonun her ürünü kendi sabitlenen bölümünde */
+.coll>header{padding-bottom:clamp(30px,4vw,56px)}
+.film{border-top:1px solid #f5f3ed14}
+.film .film-poster{object-position:60% 50%}
+.film.live{height:300vh}
+.scene .num{display:block;margin-bottom:18px;font:500 13px/1 var(--body);letter-spacing:.2em;color:var(--gold)}
+.scene h3{font-size:clamp(40px,4.6vw,78px);line-height:1}
+.film-link{position:absolute;z-index:1;left:var(--pad);bottom:62px;font-size:14.5px;font-weight:500;color:var(--ivory);text-decoration:none;border-bottom:1px solid #f5f3ed80;padding-bottom:5px;transition:color .25s,padding .35s}
+.film-link:hover{color:var(--gold);padding-right:14px}
+.film-copy{padding-bottom:70px}
+@media(max-width:860px){.film.live{height:260vh}.film .film-poster{object-position:50% 40%}.scene h3{font-size:clamp(34px,9.4vw,54px)}.film-link{bottom:50px}.film-copy{padding-bottom:104px}}
+@media(max-width:860px){.film:not([data-film=packaging]) .film-poster,.film:not([data-film=packaging]) .film-canvas{inset:0 0 auto 0;height:60%;object-position:50% 50%}.film:not([data-film=packaging]) .film-copy{background:linear-gradient(0deg,#101110 0,#101110 38%,#10111000 56%)}}

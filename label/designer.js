@@ -1,0 +1,91 @@
+const $=id=>document.getElementById(id),canvas=$('label-canvas'),ctx=canvas.getContext('2d');
+const defaults={hangtag:['#eee6d5','#171715',60,90],woven:['#e9e5da','#232526',65,30],silicone:['#242b29','#e9dfc7',60,40],metallic:['#b5a27a','#24221b',55,25],leather:['#985a32','#38251b',65,45],jacron:['#bc9360','#382a1a',70,50]};
+const names={hangtag:'Hangtag',woven:'Woven / Dokuma',silicone:'Silicone / Micro injection',metallic:'Metallic',leather:'Leather / Deri',jacron:'Jacron'};
+
+const techniques={
+ tram:['Tram / Nokta dokusu','Tasarımı noktalara ayıran temsili tram görünümü. Açık tonlar daha küçük, koyu tonlar daha büyük noktalarla gösterilir.'],
+ print:['Düz renk baskı','Renkli yazı ve logo için düz baskı görünümü.'],
+ screen:['Serigrafi','Opak, düz renkli baskı görünümü.'],
+ foilGold:['Altın varak','Metalik altın yansıma görünümü.'],
+ foilSilver:['Gümüş varak','Metalik gümüş yansıma görünümü.'],
+ emboss:['Kabartma / Gofre','Yüzeyden yükselen ton sür ton rölyef görünümü.'],
+ deboss:['Sıcak baskı / Çökertme','Yüzeye gömülen ton sür ton iz görünümü.'],
+ laser:['Lazer işleme','Koyu tonlu kazıma izi görünümü.'],
+ weave:['İplikle dokuma','Yazı ve desenin iplikle oluşturulduğu dokuma görünümü.'],
+ molded:['Kalıpta kabartma','Silikon veya mikro enjeksiyon için kalıpta rölyef görünümü.'],
+ enamel:['Renk dolgusu','Metal yüzeyde renkli dolgu görünümü.']};
+const materialTechniques={hangtag:['print','screen','foilGold','foilSilver','emboss','deboss'],woven:['weave'],silicone:['molded','deboss','screen'],metallic:['laser','emboss','deboss','enamel'],leather:['deboss','emboss','laser','foilGold','foilSilver','screen','tram'],jacron:['screen','print','deboss','foilGold','foilSilver','tram']};
+function techniqueName(key){return key==='deboss'&&$('material').value!=='leather'?'Çökertme / Deboss':techniques[key][0]}
+function updateTechniques(){const previous=$('technique').value,allowed=materialTechniques[$('material').value];$('technique').replaceChildren(...allowed.map(key=>new Option(techniqueName(key),key)));if(allowed.includes(previous))$('technique').value=previous;updateTechniqueDescription()}
+function updateTechniqueDescription(){$('tram-options').hidden=$('technique').value!=='tram';$('technique-description').textContent=techniques[$('technique').value][1];$('technique-caption').textContent=techniqueName($('technique').value)}
+function ink(s,min){ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetX=ctx.shadowOffsetY=0;ctx.fillStyle=s.foreground;
+ if(s.technique==='foilGold'||s.technique==='foilSilver'){const g=ctx.createLinearGradient(0,0,canvas.width,canvas.height);const colors=s.technique==='foilGold'?['#855b19','#f7dfa0','#b28432','#ffebb4']:['#62666b','#f0f0f0','#92989d','#ffffff'];colors.forEach((c,i)=>g.addColorStop(i/3,c));ctx.fillStyle=g}
+ if(['emboss','molded','deboss'].includes(s.technique)){ctx.fillStyle=s.background;ctx.shadowColor=s.technique==='deboss'?'#000b':'#0008';ctx.shadowBlur=Math.max(1,min*.008);ctx.shadowOffsetX=ctx.shadowOffsetY=s.technique==='deboss'?min*.004:min*.009}
+ if(s.technique==='tram'){const step=tramStep(s),tile=document.createElement('canvas');tile.width=tile.height=step;const t=tile.getContext('2d');t.fillStyle=s.foreground;t.beginPath();t.arc(step/2,step/2,step*.36,0,Math.PI*2);t.fill();ctx.fillStyle=ctx.createPattern(tile,'repeat')}
+ if(s.technique==='laser'){ctx.fillStyle='#382a23';ctx.shadowColor='#0004';ctx.shadowBlur=1}
+}
+
+let artwork=null,artworkName='',artworkURL=null,artworkVersion=0;
+let logo=null,logoName='',logoURL=null,uploadVersion=0;
+const fields=['material','shape','width','height','background','foreground','brand-name','subtitle','font','technique','text-size','logo-size','artwork-fit','artwork-size','artwork-text','tram-size','artwork-x','artwork-y','artwork-rotation','artwork-opacity','artwork-brightness','artwork-contrast','artwork-effect','artwork-flip','logo-x','logo-y'];
+function state(){return {material:$('material').value,shape:$('shape').value,width:Number($('width').value),height:Number($('height').value),background:$('background').value,foreground:$('foreground').value,brand:$('brand-name').value,subtitle:$('subtitle').value,font:$('font').value,technique:$('technique').value,textSize:Number($('text-size').value),logoSize:Number($('logo-size').value),artworkFit:$('artwork-fit').value,artworkSize:Number($('artwork-size').value),artworkText:$('artwork-text').checked,tramSize:$('tram-size').value,artwork_x:$('artwork-x').value,artwork_y:$('artwork-y').value,artwork_rotation:$('artwork-rotation').value,artwork_opacity:$('artwork-opacity').value,artwork_brightness:$('artwork-brightness').value,artwork_contrast:$('artwork-contrast').value,artwork_effect:$('artwork-effect').value,artwork_flip:$('artwork-flip').checked,logo_x:$('logo-x').value,logo_y:$('logo-y').value}}
+function valid(s){return Number.isFinite(s.width)&&s.width>=20&&s.width<=160&&Number.isFinite(s.height)&&s.height>=15&&s.height<=180}
+function path(s,w,h,inset=0){ctx.beginPath();const x=inset,y=inset,ww=w-inset*2,hh=h-inset*2;if(s.shape==='circle')ctx.ellipse(w/2,h/2,ww/2,hh/2,0,0,Math.PI*2);else ctx.roundRect(x,y,ww,hh,s.shape==='rounded'?Math.min(ww,hh)*.12:Math.min(ww,hh)*.012)}
+function fitText(text,x,y,max,size,font){ctx.font=`${window.labelFontPicker.prefix}${size}px ${font}`;while(ctx.measureText(text).width>max&&size>8){size-=.5;ctx.font=`${window.labelFontPicker.prefix}${size}px ${font}`}ctx.fillText(text,x,y)}
+function draw(){const s=state();if(!valid(s)){$('design-status').textContent='En 20–160 mm, boy 15–180 mm arasında olmalıdır.';$('download').disabled=$('download-brief').disabled=true;return}$('download').disabled=(!artwork||s.artworkText)&&!window.labelFontPicker.ready;$('download-brief').disabled=false;
+const imageScale=artwork?Math.min(1,1260/Math.max(artwork.naturalWidth,artwork.naturalHeight)):1;const w=artwork?Math.max(1,Math.round(artwork.naturalWidth*imageScale)):Math.round(s.width*7),h=artwork?Math.max(1,Math.round(artwork.naturalHeight*imageScale)):Math.round((s.shape==='circle'?s.width:s.height)*7);canvas.width=w;canvas.height=h;canvas.style.aspectRatio=`${w}/${h}`;
+ctx.clearRect(0,0,w,h);ctx.save();if(!artwork){path(s,w,h);ctx.clip();ctx.fillStyle=s.background;ctx.fillRect(0,0,w,h);
+// Deterministic surface patterns keep the material preview stable while editing.
+let seed=42;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+if(['hangtag','jacron','leather'].includes(s.material)){const count=s.material==='hangtag'?1400:4300;for(let i=0;i<count;i++){ctx.fillStyle=rand()>.5?'rgba(255,255,255,.12)':'rgba(0,0,0,.09)';const x=rand()*w,y=rand()*h;ctx.fillRect(x,y,s.material==='jacron'?rand()*9+1:rand()*2+1,rand()*2+1)}}
+if(s.material==='woven'){for(let x=0;x<w;x+=3){ctx.strokeStyle=x%2?'#00000013':'#ffffff35';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=4){ctx.strokeStyle='#00000015';ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}}
+if(s.material==='metallic'){const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#ffffff70');g.addColorStop(.4,'#ffffff00');g.addColorStop(.6,'#00000028');g.addColorStop(1,'#ffffff50');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);for(let y=0;y<h;y+=3){ctx.fillStyle='#ffffff13';ctx.fillRect(0,y,w,1)}}
+if(s.material==='silicone'){path(s,w,h,6);ctx.strokeStyle='#ffffff30';ctx.lineWidth=4;ctx.stroke();path(s,w,h,12);ctx.strokeStyle='#00000030';ctx.lineWidth=3;ctx.stroke()}
+if(['leather','woven','jacron'].includes(s.material)){path(s,w,h,Math.min(w,h)*.055);ctx.strokeStyle=s.foreground;ctx.globalAlpha=.3;ctx.lineWidth=1.5;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1}
+}
+const min=Math.min(w,h),hasHole=!artwork&&s.material==='hangtag';
+ctx.fillStyle=s.foreground;ctx.textAlign='center';ctx.textBaseline='middle';const font=window.labelFontPicker.canvasFont;let center=h*(hasHole?.56:.5);
+if(artwork)drawUploaded(artwork,s,w,h);
+if(logo&&!window.reynasBlank){const maxW=w*s.logoSize/100,maxH=h*.33;const ratio=Math.min(maxW/logo.naturalWidth,maxH/logo.naturalHeight);const lw=logo.naturalWidth*ratio,lh=logo.naturalHeight*ratio;const x=(w-lw)/2+Number(s.logo_x)*w/100,y=center-lh*.9-min*.07+Number(s.logo_y)*h/100;
+if(s.technique==='tram'){drawHalftone(logo,x,y,lw,lh,s)}else if(['foilGold','foilSilver','emboss','molded','deboss','laser'].includes(s.technique)){const mask=document.createElement('canvas');mask.width=w;mask.height=h;const m=mask.getContext('2d');m.drawImage(logo,x,y,lw,lh);m.globalCompositeOperation='source-in';ink(s,min);m.fillStyle=ctx.fillStyle;m.fillRect(0,0,w,h);ctx.drawImage(mask,0,0)}else ctx.drawImage(logo,x,y,lw,lh);center+=min*.2}
+if((!artwork||s.artworkText)&&!window.reynasBlank){ink(s,min);const fontSize=min*s.textSize/100;fitText(s.brand,w/2,center-min*.025,w*.8,fontSize,font);if(s.subtitle)fitText(s.subtitle,w/2,center+Math.max(fontSize*.95,min*.13),w*.8,min*.045,font);}
+if(hasHole){ctx.save();ctx.globalCompositeOperation='destination-out';ctx.fillStyle='#000';ctx.beginPath();ctx.arc(w/2,Math.max(18,h*.075),Math.max(5,min*.018),0,Math.PI*2);ctx.fill();ctx.restore()}
+ctx.restore();
+$('dimension').textContent=artwork?`${w} × ${h} PX`:s.shape==='circle'?`Ø ${s.width} MM`:`${s.width} × ${s.height} MM`;$('material-caption').textContent=artwork?'Yüklenen tasarım':names[s.material].toUpperCase();for(const id of ['width','shape','background'])$(id).disabled=!!artwork;$('height').disabled=!!artwork||s.shape==='circle';canvas.setAttribute('aria-label',`${names[s.material]}, ${artwork?'yüklenen tasarım':s.brand||'yazısız'}, ${$('dimension').textContent}`)}
+fields.forEach(id=>$(id).addEventListener('input',()=>{$('design-status').textContent='';if(id==='material'){const d=defaults[$('material').value];$('background').value=d[0];$('foreground').value=d[1];$('width').value=d[2];$('height').value=d[3];updateTechniques()}if(id==='technique')updateTechniqueDescription();draw()}));
+function clearLogo(){uploadVersion++;logo=null;logoName='';if(logoURL)URL.revokeObjectURL(logoURL);logoURL=null;$('logo').value='';$('logo-size').disabled=$('remove-logo').disabled=true;draw()}
+$('remove-logo').onclick=clearLogo;
+$('logo').onchange=async()=>{const file=$('logo').files[0];if(!file)return;const version=++uploadVersion;if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>5*1024*1024){$('design-status').textContent='Lütfen 5 MB veya daha küçük bir PNG, JPG ya da WebP seçin.';$('logo').value='';return}const url=URL.createObjectURL(file),img=new Image;img.onload=()=>{if(version!==uploadVersion){URL.revokeObjectURL(url);return}if(logoURL)URL.revokeObjectURL(logoURL);logoURL=url;logo=img;logoName=file.name;$('logo-size').disabled=$('remove-logo').disabled=false;$('design-status').textContent='Logonuz eklendi. Dosyanız yalnızca cihazınızda işlenir.';draw()};img.onerror=()=>{URL.revokeObjectURL(url);$('design-status').textContent='Görsel açılamadı. Başka bir PNG veya JPG deneyin.'};img.src=url};
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+$('download').onclick=async()=>{if(!valid(state()))return;if((!artwork||state().artworkText)&&!await window.labelFontPicker.ensure())return;draw();canvas.toBlob(blob=>{if(blob){download(blob,'reynas-etiket-tasarimi.png');$('design-status').textContent='Tasarım önizlemeniz PNG olarak indirildi.'}},'image/png')};
+$('download-brief').onclick=()=>{const s=state();if(!valid(s))return;const text=`REYNAS / ETİKET TASARIM ÖZETİ\n\nTür: ${names[s.material]}\nŞekil: ${artwork?'Yüklenen görselin kendi oranı':$('shape').selectedOptions[0].text}\nÖlçü: ${$('dimension').textContent}\nZemin rengi: ${artwork?'Özgün görsel / Şeffaf':s.background}\nYazı rengi: ${s.foreground}\nMarka: ${s.brand}\nAlt satır: ${s.subtitle}\nYazı karakteri: ${window.labelFontPicker.name}\nUygulama: ${techniqueName(s.technique)}\nTram dokusu: ${s.technique==='tram'?$('tram-size').selectedOptions[0].text:'Yok'}\nYüklenen tasarım: ${artworkName||'Yok'}\nTasarım yerleşimi: ${artwork?$('artwork-fit').selectedOptions[0].text:'Yok'}\nTasarım ölçeği: ${artwork?s.artworkSize+'%':'Yok'}\nEk marka yazısı: ${!artwork||s.artworkText?'Açık':'Kapalı'}\nGörsel konumu: ${s.artwork_x}%, ${s.artwork_y}%\nDöndürme: ${s.artwork_rotation}°\nSaydamlık: ${s.artwork_opacity}%\nParlaklık / Kontrast: ${s.artwork_brightness}% / ${s.artwork_contrast}%\nRenk efekti: ${s.artwork_effect}\nYatay ayna: ${s.artwork_flip}\nLogo konumu: ${s.logo_x}%, ${s.logo_y}%\nLogo: ${logoName||'Yok'}\n\nBu çalışma üretime hazır dosya değildir. Renk, doku ve uygulama temsilidir. Üretim uygunluğu Reynas ile netleştirilmelidir.\nİletişim: +90 553 245 70 60\n`;download(new Blob(['\uFEFF'+text],{type:'text/plain;charset=utf-8'}),'reynas-tasarim-ozeti.txt');$('design-status').textContent='Proje özetiniz indirildi. Logo ve tasarım görselini ayrıca paylaşabilirsiniz.'};
+
+function tramStep(s){return {fine:5,medium:9,bold:14}[s.tramSize]||9}
+function drawHalftone(image,x,y,width,height,s){
+ const buffer=document.createElement('canvas');buffer.width=canvas.width;buffer.height=canvas.height;const b=buffer.getContext('2d',{willReadFrequently:true});b.drawImage(image,x,y,width,height);const pixels=b.getImageData(0,0,buffer.width,buffer.height).data,step=tramStep(s);ctx.save();ctx.fillStyle=s.foreground;
+ for(let yy=0;yy<buffer.height;yy+=step)for(let xx=0;xx<buffer.width;xx+=step){let coverage=0,count=0;for(let dy=0;dy<step&&yy+dy<buffer.height;dy+=2)for(let dx=0;dx<step&&xx+dx<buffer.width;dx+=2){const i=((yy+dy)*buffer.width+xx+dx)*4;const l=(.2126*pixels[i]+.7152*pixels[i+1]+.0722*pixels[i+2])/255;coverage+=(1-l)*pixels[i+3]/255;count++}const radius=step*.48*Math.sqrt(coverage/(count||1));if(radius>.15){ctx.beginPath();ctx.arc(xx+step/2,yy+step/2,radius,0,Math.PI*2);ctx.fill()}}
+ ctx.restore();
+}
+function drawUploaded(image,s,w,h){
+ const ratio=(s.artworkFit==='cover'?Math.max(w/image.naturalWidth,h/image.naturalHeight):Math.min(w/image.naturalWidth,h/image.naturalHeight))*s.artworkSize/100;
+ const width=image.naturalWidth*ratio,height=image.naturalHeight*ratio;
+ const layer=document.createElement('canvas');layer.width=w;layer.height=h;const c=layer.getContext('2d');
+ c.translate(w/2+Number(s.artwork_x)*w/100,h/2+Number(s.artwork_y)*h/100);c.rotate(Number(s.artwork_rotation)*Math.PI/180);c.scale(s.artwork_flip?-1:1,1);
+ c.globalAlpha=Number(s.artwork_opacity)/100;c.filter=`brightness(${s.artwork_brightness}%) contrast(${s.artwork_contrast}%) ${s.artwork_effect==='grayscale'?'grayscale(1)':s.artwork_effect==='sepia'?'sepia(1)':''}`;
+ c.drawImage(image,-width/2,-height/2,width,height);
+ if(s.technique==='tram')drawHalftone(layer,0,0,w,h,s);else ctx.drawImage(layer,0,0);
+ $('rotation-value').textContent=s.artwork_rotation+'°';
+}
+function resetArtworkAdjustments(){for(const [id,value] of Object.entries({'artwork-fit':'contain','artwork-size':100,'artwork-x':0,'artwork-y':0,'artwork-rotation':0,'artwork-opacity':100,'artwork-brightness':100,'artwork-contrast':100,'artwork-effect':'original'}))$(id).value=value;$('artwork-flip').checked=false;draw()}
+$('artwork-reset').onclick=resetArtworkAdjustments;
+let drag=null;
+canvas.addEventListener('pointerdown',e=>{if(!artwork)return;e.preventDefault();const r=canvas.getBoundingClientRect();drag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:Number($('artwork-x').value),startY:Number($('artwork-y').value),w:r.width,h:r.height};canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const clamp=v=>Math.max(-100,Math.min(100,v));$('artwork-x').value=clamp(drag.startX+(e.clientX-drag.x)/drag.w*100);$('artwork-y').value=clamp(drag.startY+(e.clientY-drag.y)/drag.h*100);draw()});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,()=>drag=null);
+function clearArtwork(){artworkVersion++;artwork=null;artworkName='';if(artworkURL)URL.revokeObjectURL(artworkURL);artworkURL=null;$('artwork').value='';$('artwork-settings').hidden=true;canvas.classList.remove('artwork-editable');$('artwork-name').textContent='';$('artwork-status').textContent='';draw()}
+$('remove-artwork').onclick=()=>{clearArtwork();$('artwork-status').textContent='Yüklenen tasarım kaldırıldı. Yazı ve logo ayarların yeniden görünür.'};
+$('artwork').onchange=()=>{const file=$('artwork').files[0];if(!file)return;const version=++artworkVersion;if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>10*1024*1024){$('artwork-status').textContent='En fazla 10 MB bir PNG, JPG veya WebP görseli seç. Mevcut tasarımın korundu.';$('artwork').value='';return}const url=URL.createObjectURL(file),image=new Image;$('artwork-status').textContent='Tasarımın hazırlanıyor…';image.onload=()=>{if(version!==artworkVersion){URL.revokeObjectURL(url);return}if(image.naturalWidth*image.naturalHeight>20000000){URL.revokeObjectURL(url);$('artwork-status').textContent='Görsel çok büyük. 20 megapiksel veya daha küçük bir kopyasını yükle.';$('artwork').value='';return}if(artworkURL)URL.revokeObjectURL(artworkURL);artworkURL=url;artwork=image;artworkName=file.name;$('artwork-name').textContent=file.name;$('artwork-settings').hidden=false;canvas.classList.add('artwork-editable');resetArtworkAdjustments();$('artwork-text').checked=false;$('artwork-fit').value='contain';$('artwork-size').value='100';$('artwork-status').textContent='Tasarımın eklendi. Görseli sürükle veya ayarlarla düzenle. Logo ayrı bir katmanda görünür; marka yazısını kutudan açabilirsin.';draw()};image.onerror=()=>{URL.revokeObjectURL(url);if(version!==artworkVersion)return;$('artwork-status').textContent='Görsel açılamadı. Başka bir PNG veya JPG dene.';$('artwork').value=''};image.src=url};
+
+$('reset').onclick=()=>{HTMLFormElement.prototype.reset.call($('design-controls'));updateTechniques();window.labelFontPicker.reset();clearLogo();clearArtwork();$('design-status').textContent='Tasarım başlangıç ayarlarına döndü.';draw()};$('design-controls').onsubmit=e=>e.preventDefault();document.addEventListener('fontpreviewchange',draw);updateTechniques();draw();
+
+window.reynasRedraw=draw;

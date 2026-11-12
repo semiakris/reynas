@@ -1,0 +1,43 @@
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reynas Portal</title>
+<meta name="description" content="Reynas iç uygulaması: sipariş, müşteri ve başvuru takibi.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#171715">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reynas">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Sofia+Sans+Extra+Condensed:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head><body>
+
+<div id="boot" class="boot"><img src="icons/icon-192.png" alt="Reynas"><p>Yükleniyor…</p></div>
+
+<form id="login" class="login" hidden>
+ <img class="login-logo" src="icons/icon-512.png" alt="Reynas">
+ <h1>Portal</h1>
+ <div class="who" role="tablist"><button type="button" class="on" data-who="staff">Çalışan girişi</button><button type="button" data-who="admin">Yönetici girişi</button></div>
+ <label>E-posta<input name="email" type="email" autocomplete="username" required inputmode="email" autocapitalize="off"></label>
+ <label>Şifre<input name="password" type="password" autocomplete="current-password" required></label>
+ <button class="btn solid" type="submit">Giriş yap</button>
+ <p id="login-error" class="error" role="alert"></p>
+ <div class="login-note" id="demo-note" hidden><p>Deneme modu. Şifre hepsinde <b>1234</b>. Dokunarak doldurun:</p><button type="button" data-fill="yonetici@reynas">Yönetici</button><button type="button" data-fill="calisan@reynas">Deri ustası</button><button type="button" data-fill="depo@reynas">Depo sorumlusu</button></div>
+</form>
+
+<div id="app" class="app" hidden>
+ <header class="bar"><img class="bar-logo" src="icons/logo.webp" alt="Reynas"><h1 id="view-title"></h1><button id="add" class="bar-add" type="button" aria-label="Yeni kayıt" hidden>+</button><button id="me" class="bar-me" type="button" aria-label="Ayarlar"></button></header>
+ <main id="screen"></main>
+ <nav class="tabs" id="tabs"></nav>
+</div>
+
+<div id="sheet" class="sheet" hidden><div class="sheet-card" role="dialog" aria-modal="true"><header><h2 id="sheet-title"></h2><button type="button" id="sheet-close" aria-label="Kapat">×</button></header><div id="sheet-body"></div></div></div>
+<p id="toast" class="toast" role="status" aria-live="polite" hidden></p>
+
+<script src="config.js"></script>
+<script src="store.js"></script>
+<script src="app.js"></script>
+</body></html>
