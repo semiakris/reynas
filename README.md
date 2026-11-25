@@ -1,3 +1,3 @@
-# Reynas siteleri
+# Reynas Label
 
-Üç ayrı site: `label/`, `accessories/`, `retail/`. Önizleme GitHub Pages üzerinden yayınlanır.
+Yayındaki site: `label/`. `accessories/` ve `retail/` klasörleri şimdilik siteden bağlantılı değil.

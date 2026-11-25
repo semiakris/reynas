@@ -6,7 +6,7 @@
  const IW=1672,IH=941,BT=557,BB=597,SLOT=1126,FRAME=554,SIDE=1282,DARK0=1150,DARK1=1272,SQ=.42;
  let W=0,H=0,dpr=1,k=1,m=1,G={},sprites=[],items=[],visible=false,running=false,last=0,order=[],beltShift=0,pending=null;
  const photo=new Image();photo.src='assets/machine.webp';
- const LIST=[['Hangtag','belt/p14-1',150],['Woven','belt/p17-1',150],['Woven','belt/p19-2',150],['Woven','belt/p18-0',140],['Silicone','belt/p22-1',125],['Silicone','belt/p22-0',125],['Metallic','belt/p29-3',150],['Metallic','belt/p28-3',80],['Metallic','belt/p28-1',80],['Leather','pile/p33-2',135],['Leather','pile/p36-0',135],['Jacron','belt/p39-0',140],['Jacron','belt/p39-1',140]];
+ const LIST=[['Hangtag','belt/p14-1',150],['Woven','belt/p17-1',150],['Woven','belt/p19-2',150],['Woven','belt/p18-0',140],['Silicone','belt/p22-1',125],['Silicone','belt/p22-0',125],['Metal Trims','belt/p29-3',150],['Metal Trims','belt/p28-3',80],['Metal Trims','belt/p28-1',80],['Leather','pile/p33-2',135],['Leather','pile/p36-0',135],['Jacron','belt/p39-0',140],['Jacron','belt/p39-1',140]];
  const rnd=(a,b)=>a+Math.random()*(b-a);
  const load=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
  /* Ürün fotoğrafları açık zeminde çekildi; karanlık sahneye uysun diye bir kez tonlanır */
@@ -70,7 +70,7 @@
   let tm;addEventListener('resize',()=>{clearTimeout(tm);tm=setTimeout(()=>{const b=stage.getBoundingClientRect();if(Math.abs(b.width-W)>1||Math.abs(b.height-H)>1){layout();prefill();render()}},150)})}
 
  /* ---------- ürünü banttan alıp inceleme ---------- */
- const groups={Hangtag:'hangtag',Woven:'woven',Leather:'leather',Jacron:'jacron',Silicone:'silicone',Metallic:'metallic'};let held=null;
+ const groups={Hangtag:'hangtag',Woven:'woven',Leather:'leather',Jacron:'jacron',Silicone:'silicone','Metal Trims':'metallic'};let held=null;
  function hit(mx,my){for(let i=items.length-1;i>=0;i--){const it=items[i],p=itemPos(it),z=size(it),dx=mx-p.x,dy=(my-p.y)/SQ,c=Math.cos(-it.a),n=Math.sin(-it.a),lx=dx*c-dy*n,ly=dx*n+dy*c;if(it.x<X(SLOT)&&Math.abs(lx)<=it.sp.w*z/2+6&&Math.abs(ly)<=it.sp.h*z/2+6)return it}return null}
  const local=e=>{const r=canvas.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
  canvas.addEventListener('mousemove',e=>{canvas.style.cursor=hit(...local(e))?'pointer':''});

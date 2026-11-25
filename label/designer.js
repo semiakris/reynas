@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id),canvas=$('label-canvas'),ctx=canvas.getContext('2d');
 const defaults={hangtag:['#eee6d5','#171715',60,90],woven:['#e9e5da','#232526',65,30],silicone:['#242b29','#e9dfc7',60,40],metallic:['#b5a27a','#24221b',55,25],leather:['#985a32','#38251b',65,45],jacron:['#bc9360','#382a1a',70,50]};
-const names={hangtag:'Hangtag',woven:'Woven / Dokuma',silicone:'Silicone / Micro injection',metallic:'Metallic',leather:'Leather / Deri',jacron:'Jacron'};
+const names={hangtag:'Hangtag',woven:'Woven / Dokuma',silicone:'Silicone / Micro injection',metallic:'Metal Trims',leather:'Leather / Deri',jacron:'Jacron'};
 
 const techniques={
  tram:['Tram / Nokta dokusu','Tasarımı noktalara ayıran temsili tram görünümü. Açık tonlar daha küçük, koyu tonlar daha büyük noktalarla gösterilir.'],
